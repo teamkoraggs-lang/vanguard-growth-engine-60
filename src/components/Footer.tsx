@@ -1,7 +1,7 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 
-const Footer = () => (
-  <footer className="border-t border-border/50 bg-secondary/30">
+const Footer = () =>
+<footer className="border-t border-border/50 bg-secondary/30">
     <div className="container mx-auto section-padding pb-8">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
         <div className="md:col-span-1">
@@ -36,9 +36,9 @@ const Footer = () => (
         <div>
           <h4 className="font-heading font-semibold text-foreground mb-4">Get in Touch</h4>
           <ul className="space-y-3 text-sm text-muted-foreground">
-            <li className="flex items-center gap-2"><Mail size={14} className="text-primary" /> hello@vanguardweb.com</li>
+            <li className="flex items-center gap-2"><Mail size={14} className="text-primary" />Brandenellis2031@gmail.com</li>
             <li className="flex items-center gap-2"><Phone size={14} className="text-primary" /> (555) 123-4567</li>
-            <li className="flex items-center gap-2"><MapPin size={14} className="text-primary" /> San Francisco, CA</li>
+            <li className="flex items-center gap-2"><MapPin size={14} className="text-primary" />Chicago, IL</li>
           </ul>
         </div>
       </div>
@@ -48,15 +48,15 @@ const Footer = () => (
           © 2026 Vanguard Web Solutions. All rights reserved.
         </p>
         <div className="flex gap-6">
-          {["Twitter", "LinkedIn", "Dribbble"].map((s) => (
-            <a key={s} href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          {["Twitter", "LinkedIn", "Dribbble"].map((s) =>
+        <a key={s} href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               {s}
             </a>
-          ))}
+        )}
         </div>
       </div>
     </div>
-  </footer>
-);
+  </footer>;
+
 
 export default Footer;
