@@ -2,13 +2,45 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
-import { Send } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const budgetOptions = ["< $5,000", "$5,000 – $15,000", "$15,000 – $30,000", "$30,000+"];
 
 const ContactSection = () => {
   const [budget, setBudget] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email || !message) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("contact-form", {
+        body: { name, email, business_name: businessName, budget, message },
+      });
+      if (error) throw error;
+      toast.success("Message sent! We'll be in touch within 24 hours.");
+      setName("");
+      setEmail("");
+      setBusinessName("");
+      setBudget("");
+      setMessage("");
+    } catch (err: any) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section id="contact" className="section-padding bg-secondary/20">
@@ -38,23 +70,23 @@ const ContactSection = () => {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSubmit}
             className="glass-card p-6 md:p-8 space-y-5"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm text-muted-foreground mb-1.5 block">Name</label>
-                <Input placeholder="John Doe" className="bg-background/50 border-border/50 focus:border-primary/50" />
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" className="bg-background/50 border-border/50 focus:border-primary/50" />
               </div>
               <div>
                 <label className="text-sm text-muted-foreground mb-1.5 block">Email</label>
-                <Input type="email" placeholder="john@company.com" className="bg-background/50 border-border/50 focus:border-primary/50" />
+                <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="john@company.com" className="bg-background/50 border-border/50 focus:border-primary/50" />
               </div>
             </div>
 
             <div>
               <label className="text-sm text-muted-foreground mb-1.5 block">Business Name</label>
-              <Input placeholder="Acme Inc." className="bg-background/50 border-border/50 focus:border-primary/50" />
+              <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} placeholder="Acme Inc." className="bg-background/50 border-border/50 focus:border-primary/50" />
             </div>
 
             <div>
@@ -80,15 +112,17 @@ const ContactSection = () => {
             <div>
               <label className="text-sm text-muted-foreground mb-1.5 block">Tell us about your project</label>
               <Textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
                 placeholder="What are your goals? What challenges are you facing?"
                 rows={4}
                 className="bg-background/50 border-border/50 focus:border-primary/50 resize-none"
               />
             </div>
 
-            <Button variant="hero" className="w-full py-5 rounded-xl">
-              Send Message
-              <Send size={16} />
+            <Button variant="hero" className="w-full py-5 rounded-xl" disabled={loading}>
+              {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+              {loading ? "Sending..." : "Send Message"}
             </Button>
           </motion.form>
         </div>
